@@ -1,9 +1,8 @@
 FROM python:3.9-slim
 
-# Install system dependencies
+# Install only required system dependencies
 RUN apt-get update && apt-get install -y \
-    portaudio19-dev \
-    python3-pyaudio \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
