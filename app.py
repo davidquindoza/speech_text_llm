@@ -37,24 +37,19 @@ def transcribe():
         print(f"Filename: {audio_file.filename}")
         print(f"Content Type: {audio_file.content_type}")
 
-        #temp file
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as tmp_file:
-            audio_file.save(tmp_file.name)
-            
-            # Use speech recognition
-            recognizer = sr.Recognizer()
-            with sr.AudioFile(tmp_file.name) as source:
-                audio = recognizer.record(source)
-                # Convert to text 
-                text = recognizer.recognize_google(audio)
-            
-            # Clean up the temporary file
-            os.unlink(tmp_file.name)
+     # Convert directly without saving temp file
+        recognizer = sr.Recognizer()
         
-        # Just confirm we received the file correctly
+        # Read audio file directly from request
+        audio_data = sr.AudioFile(io.BytesIO(audio_file.read()))
+        
+        with audio_data as source:
+            audio = recognizer.record(source)
+            text = recognizer.recognize_google(audio)
+        
         return jsonify({
             'success': True,
-            'message': 'Audio file received',
+            'message': 'Audio processed successfully',
             'filename': audio_file.filename,
             'content_type': audio_file.content_type,
             'text': text
