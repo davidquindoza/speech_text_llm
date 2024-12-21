@@ -56,7 +56,7 @@ def transcribe():
             'success': True,
             'message': 'Audio file received',
             'filename': audio_file.filename,
-            'content_type': audio_file.content_type
+            'content_type': audio_file.content_type,
             'text': text
         })
                 
