@@ -23,11 +23,15 @@ def test():
 @app.route('/api/transcribe', methods=['POST'])
 def transcribe():
     try:
+        print("Request received") 
+        
         # Check if request has the audio file
         if 'audio' not in request.files:
+            print("No Audio file seen") 
             return jsonify({'error': 'No audio file provided'}), 400
             
         audio_file = request.files['audio']
+        print(f"File received: {audio_file.filename}")
         
         # Validate if file was selected
         if audio_file.filename == '':
@@ -39,6 +43,7 @@ def transcribe():
         
         # Read the audio data from formdata
         audio_data = audio_file.read()
+        print(f"Audio data size: {len(audio_data)} bytes")
         
         # Create temporary WAV file 
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_wav:
@@ -66,6 +71,7 @@ def transcribe():
                     os.unlink(temp_wav.name)
 
     except Exception as e:
+        print(f"Audio data size: {len(audio_data)} bytes")
         return jsonify({
             'success': False,
             'error': str(e)
