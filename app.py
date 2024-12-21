@@ -5,6 +5,7 @@ import speech_recognition as sr
 import tempfile
 import wave
 import os
+import io
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for OutSystems to access the API
