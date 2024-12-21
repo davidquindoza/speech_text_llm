@@ -26,11 +26,11 @@ def transcribe():
         print("Request received") 
         
         # Check if request has the audio file
-        if 'audio' not in request.files:
+        if 'audio' not in request.form:
             print("No Audio file seen") 
             return jsonify({'error': 'No audio file provided'}), 400
             
-        audio_file = request.files['audio']
+        audio_file = request.form['audio']
         print(f"File received: {audio_file.filename}")
         
         # Validate if file was selected
