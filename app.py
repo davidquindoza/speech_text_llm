@@ -23,55 +23,30 @@ def test():
 @app.route('/api/transcribe', methods=['POST'])
 def transcribe():
     try:
-        print("Request received") 
+        print("=== Request received ===")
         
-        # Check if request has the audio file
+        # Print request
+        print("Files in request:", request.files)
+        print("Form data:", request.form)
+        
         if 'audio' not in request.files:
-            print("No Audio file seen") 
+            print("No audio file in request.files")
             return jsonify({'error': 'No audio file provided'}), 400
             
         audio_file = request.files['audio']
-        print(f"File received: {audio_file.filename}")
+        print(f"Filename: {audio_file.filename}")
+        print(f"Content Type: {audio_file.content_type}")
         
-        # Validate if file was selected
-        if audio_file.filename == '':
-            return jsonify({'error': 'No file selected'}), 400
-            
-        # Validate file format
-        if not allowed_file(audio_file.filename):
-            return jsonify({'error': f'File format not supported. Allowed formats: {", ".join(ALLOWED_EXTENSIONS)}'}), 400
-        
-        # Read the audio data from formdata
-        audio_data = audio_file.read()
-        print(f"Audio data size: {len(audio_data)} bytes")
-        
-        # Create temporary WAV file 
-        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_wav:
-            try:
-                # Temp data to WAV file
-                with wave.open(temp_wav.name, 'wb') as wav_file:
-                    wav_file.setnchannels(1)  # Mono audio
-                    wav_file.setsampwidth(2)  # 2 bytes per sample
-                    wav_file.setframerate(44100)  # Standard sample rate
-                    wav_file.writeframes(audio_data)
+        # Just confirm we received the file correctly
+        return jsonify({
+            'success': True,
+            'message': 'Audio file received',
+            'filename': audio_file.filename,
+            'content_type': audio_file.content_type
+        })
                 
-                # Convert
-                recognizer = sr.Recognizer()
-                with sr.AudioFile(temp_wav.name) as source:
-                    audio = recognizer.record(source)
-                    text = recognizer.recognize_google(audio)
-                    
-                    return jsonify({
-                        'success': True,
-                        'text': text
-                    })
-            finally:
-                #sure clean resources after everything
-                if os.path.exists(temp_wav.name):
-                    os.unlink(temp_wav.name)
-
     except Exception as e:
-        print(f"Audio data size: {len(audio_data)} bytes")
+        print(f"Error: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
